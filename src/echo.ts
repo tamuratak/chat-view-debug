@@ -54,8 +54,8 @@ async function dispatchDirective(
     stream: vscode.ChatResponseStream,
     request: vscode.ChatRequest
 ): Promise<void> {
-    const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
     const reference = getFileReferenceUri(request.references)
+    const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index, reference)
     switch (parsed.directive) {
         case 'markdown':
             stream.markdown(payload)
@@ -73,7 +73,7 @@ async function dispatchDirective(
         }
         case 'codeblockuri': {
             if (reference) {
-                stream.codeblockUri(reference)
+                stream.codeblockUri(reference, true)
             }
             return
         }
@@ -109,26 +109,41 @@ async function dispatchDirective(
 }
 
 // Provide a fallback payload when the directive payload is empty.
-function getDefaultPayload(directive: string, index: number): string {
+function getDefaultPayload(directive: string, index: number, fileUri: vscode.Uri | undefined): string {
     switch (directive) {
         case 'progress':
-            return `Running progress for directive #${index + 1}`
+            return `
+Running progress #${index + 1}
+~~~ts
+// This is a default payload for the "${directive}" directive.
+console.log('Hello from directive #${index + 1}');
+~~~
+`
         case 'thinkingprogress':
-            return `Thinking update #${index + 1}`
+            return `
+Thinking update #${index + 1}
+~~~ts
+// This is a default payload for the "${directive}" directive.
+console.log('Hello from directive #${index + 1}');
+~~~
+`
         case 'warning':
             return `Warning generated for directive #${index + 1}`
         case 'confirmation':
             return `Confirm directive #${index + 1}`
         case 'questioncarousel':
             return `Question carousel prompt #${index + 1}`
+        case 'textedit':
+            return `// Text edit inserted by directive #${index + 1}\n`
         default:
             return `
 Echo directive #${index + 1}
-~~~ts
+
+\`\`\`ts
+// filepath: ${fileUri?.toString() ?? 'N/A'}
 // This is a default payload for the "${directive}" directive.
 console.log('Hello from directive #${index + 1}');
-~~~
-
+\`\`\`
 `
     }
 }
