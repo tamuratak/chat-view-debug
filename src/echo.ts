@@ -1,5 +1,9 @@
 import * as vscode from 'vscode'
 
+async function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 export class EchoChatParticipant {
 
     getHandler(): vscode.ChatRequestHandler {
@@ -13,7 +17,8 @@ export class EchoChatParticipant {
 
             const instructions = parsePromptLines(input)
             for (const instruction of instructions) {
-                await dispatchDirective(instruction, stream)
+                await dispatchDirective(instruction, stream, request)
+                await sleep(500) // Simulate some delay between directives
             }
         }
     }
@@ -46,12 +51,20 @@ function parsePromptLines(input: string): ParsedDirective[] {
 // Dispatch the parsed directive to the corresponding stream call, supplying defaults when needed.
 async function dispatchDirective(
     parsed: ParsedDirective,
-    stream: vscode.ChatResponseStream
+    stream: vscode.ChatResponseStream,
+    request: vscode.ChatRequest,
 ): Promise<void> {
     const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
     switch (parsed.directive) {
         case 'markdown':
             stream.markdown(payload)
+            return
+        case 'textedit':
+            const reference = request.references?.[0].value             
+            if (reference instanceof vscode.Uri) {
+                const edit = vscode.TextEdit.insert(new vscode.Position(0, 0), payload)
+                stream.textEdit(reference, [edit])
+            }
             return
         case 'progress':
             stream.progress(payload)
@@ -98,6 +111,13 @@ function getDefaultPayload(directive: string, index: number): string {
         case 'questioncarousel':
             return `Question carousel prompt #${index + 1}`
         default:
-            return `Echo directive #${index + 1}`
+            return `
+Echo directive #${index + 1}
+~~~ts
+// This is a default payload for the "${directive}" directive.
+console.log('Hello from directive #${index + 1}');
+~~~
+
+`
     }
 }
