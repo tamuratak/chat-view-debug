@@ -10,15 +10,14 @@ export class EchoChatParticipant {
         return async (
             request: vscode.ChatRequest,
             _context: vscode.ChatContext,
-            stream: vscode.ChatResponseStream,
-            token: vscode.CancellationToken
+            stream: vscode.ChatResponseStream
         ) => {
             const input = request.prompt ?? ''
             stream.markdown('**Echo Chat Participant**\n\n')
 
             const instructions = parsePromptLines(input)
             for (const instruction of instructions) {
-                await dispatchDirective(instruction, stream, request, token)
+                await dispatchDirective(instruction, stream, request)
                 await sleep(500) // Simulate some delay between directives
             }
         }
@@ -53,8 +52,7 @@ function parsePromptLines(input: string): ParsedDirective[] {
 async function dispatchDirective(
     parsed: ParsedDirective,
     stream: vscode.ChatResponseStream,
-    request: vscode.ChatRequest,
-    token: vscode.CancellationToken
+    request: vscode.ChatRequest
 ): Promise<void> {
     const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
     switch (parsed.directive) {
