@@ -1,0 +1,81 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "task-test",
+            "type": "npm",
+            "script": "test:witsandbox",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "never",
+                "clear": true,
+                "close": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "task-test-json",
+            "type": "npm",
+            "script": "test:witsandbox:json",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "never",
+                "clear": true,
+                "close": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "task-lint",
+            "type": "npm",
+            "script": "lint",
+            "presentation": {
+                "reveal": "never",
+                "clear": true,
+                "close": false
+            },
+            "problemMatcher": [
+                {
+                    "owner": "javascript",
+                    "fileLocation": "absolute",
+                    "pattern": [
+                        {
+                            "regexp": "^([^\\s].*)$",
+                            "file": 1
+                        },
+                        {
+                            "regexp": "^\\s+(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s\\s+(.*)$",
+                            "line": 1,
+                            "column": 2,
+                            "severity": 3,
+                            "message": 4,
+                            "code": 5,
+                            "loop": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,96 @@
+{
+  "name": "chat-view-debug",
+  "displayName": "Chat View Debug",
+  "version": "0.0.1",
+  "publisher": "tamuratak",
+  "license": "MIT",
+  "description": "An extension to debug the Chat View API in VS Code.",
+  "homepage": "https://github.com/tamuratak/chat-view-debug",
+  "main": "./out/src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamuratak/chat-view-debug.git"
+  },
+  "engines": {
+    "vscode": "^1.108.0"
+  },
+  "files": [
+    "node_modules",
+    "out",
+    "LICENSE"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": true,
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
+  "enabledApiProposals": [
+    "embeddings",
+    "chatParticipantAdditions",
+    "chatProvider",
+    "languageModelSystem",
+    "languageModelThinkingPart"
+  ],
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "echo.chatParticipant",
+        "fullName": "Chat View Debug Echo",
+        "name": "echo",
+        "description": "Chat histories are ignored, and tool calls are disabled in this mode.",
+        "isSticky": true
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "able_python",
+        "tags": [
+          "Python Execution"
+        ],
+        "displayName": "Run Python",
+        "modelDescription": "This tool runs Python code using Pyodide, a WebAssembly-based runtime, and returns the result of the final evaluated expression. It allows an LLM to dynamically evaluate code for debugging, testing, or real-time data processing in a safe, sandboxed environment. This is useful for validating code behavior or computing results during decision-making.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "The Python code to run"
+            },
+            "reason": {
+              "type": "string",
+              "description": "The reason for running the code"
+            }
+          },
+          "required": [
+            "code"
+          ]
+        }
+      }
+    ]
+  },
+  "activationEvents": [
+    "onFileSystem:file"
+  ],
+  "devDependencies": {
+    "@eslint/js": "9.39.2",
+    "@types/node": "~22.15",
+    "@types/vscode": "1.108.1",
+    "@vscode/dts": "0.4.1",
+    "@vscode/vsce": "3.7.1",
+    "eslint": "9.39.2",
+    "glob": "13.0.0",
+    "rimraf": "3.0.2",
+    "source-map-support": "0.5.21",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.54.0"
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "clean": "sandbox-exec.js -c -- rimraf out/ .eslintcache",
+    "lint": "sandbox-exec.js -c -- eslint --cache .",
+    "lint:fix": "sandbox-exec.js -c -- eslint --fix --cache .",
+    "release": "npm run clean && npm run lint && npm run build && vsce package",
+    "watch": "tsc -w -p ./"
+  }
+}
