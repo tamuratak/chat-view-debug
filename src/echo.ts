@@ -10,14 +10,15 @@ export class EchoChatParticipant {
         return async (
             request: vscode.ChatRequest,
             _context: vscode.ChatContext,
-            stream: vscode.ChatResponseStream
+            stream: vscode.ChatResponseStream,
+            token: vscode.CancellationToken
         ) => {
             const input = request.prompt ?? ''
             stream.markdown('**Echo Chat Participant**\n\n')
 
             const instructions = parsePromptLines(input)
             for (const instruction of instructions) {
-                await dispatchDirective(instruction, stream, request)
+                await dispatchDirective(instruction, stream, request, token)
                 await sleep(500) // Simulate some delay between directives
             }
         }
@@ -53,19 +54,25 @@ async function dispatchDirective(
     parsed: ParsedDirective,
     stream: vscode.ChatResponseStream,
     request: vscode.ChatRequest,
+    token: vscode.CancellationToken
 ): Promise<void> {
     const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
     switch (parsed.directive) {
         case 'markdown':
             stream.markdown(payload)
             return
-        case 'textedit':
-            const reference = request.references?.[0].value             
+        case 'textedit': {
+            const reference = request.references?.[0].value
             if (reference instanceof vscode.Uri) {
                 const edit = vscode.TextEdit.insert(new vscode.Position(0, 0), payload)
                 stream.textEdit(reference, [edit])
             }
             return
+        }
+        case 'toolcall': {
+            await vscode.lm.invokeTool('cvdtool', {  toolInvocationToken: request.toolInvocationToken, input: { input: payload } })
+            return
+        }
         case 'progress':
             stream.progress(payload)
             return
