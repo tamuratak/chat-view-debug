@@ -43,6 +43,21 @@
       }
     ],
     "languageModelTools": [
+      {
+        "name": "cvdtool",
+        "displayName": "Chat View Debug Tool",
+        "userDescription": "dummy tool",
+        "modelDescription": "dummy tool",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string",
+              "description": "description"
+            }
+          }
+        }
+      }
 
     ]
   },
