@@ -55,13 +55,13 @@ async function dispatchDirective(
     request: vscode.ChatRequest
 ): Promise<void> {
     const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
+    const reference = getFileReferenceUri(request.references)
     switch (parsed.directive) {
         case 'markdown':
             stream.markdown(payload)
             return
         case 'textedit': {
-            const reference = request.references?.[0].value
-            if (reference instanceof vscode.Uri) {
+            if (reference) {
                 const edit = vscode.TextEdit.insert(new vscode.Position(0, 0), payload)
                 stream.textEdit(reference, [edit])
             }
@@ -69,6 +69,12 @@ async function dispatchDirective(
         }
         case 'toolcall': {
             await vscode.lm.invokeTool('cvdtool', {  toolInvocationToken: request.toolInvocationToken, input: { input: payload } })
+            return
+        }
+        case 'codeblockuri': {
+            if (reference) {
+                stream.codeblockUri(reference)
+            }
             return
         }
         case 'progress':
@@ -125,4 +131,15 @@ console.log('Hello from directive #${index + 1}');
 
 `
     }
+}
+
+function getFileReferenceUri(references: readonly vscode.ChatPromptReference[]): vscode.Uri | undefined {
+    for (const reference of references) {
+        if (reference.value instanceof vscode.Uri) {
+            if (vscode.workspace.getWorkspaceFolder(reference.value)) {
+                return reference.value
+            }
+        }
+    }
+    return undefined
 }
