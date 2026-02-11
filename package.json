@@ -43,30 +43,7 @@
       }
     ],
     "languageModelTools": [
-      {
-        "name": "able_python",
-        "tags": [
-          "Python Execution"
-        ],
-        "displayName": "Run Python",
-        "modelDescription": "This tool runs Python code using Pyodide, a WebAssembly-based runtime, and returns the result of the final evaluated expression. It allows an LLM to dynamically evaluate code for debugging, testing, or real-time data processing in a safe, sandboxed environment. This is useful for validating code behavior or computing results during decision-making.",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "code": {
-              "type": "string",
-              "description": "The Python code to run"
-            },
-            "reason": {
-              "type": "string",
-              "description": "The reason for running the code"
-            }
-          },
-          "required": [
-            "code"
-          ]
-        }
-      }
+
     ]
   },
   "activationEvents": [
