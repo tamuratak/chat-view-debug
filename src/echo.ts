@@ -74,9 +74,8 @@ async function dispatchDirective(
             return
         }
         case 'codeblockuri': {
-            if (reference) {
-                stream.codeblockUri(reference, false)
-            }
+            const ref = reference ?? vscode.Uri.parse('file:///tmp/tmp.txt')
+            stream.codeblockUri(ref, false)
             return
         }
         case 'progress': {
