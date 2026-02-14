@@ -25,7 +25,7 @@ export class EchoChatParticipant {
 
 }
 
-type ParsedDirective = {
+interface ParsedDirective {
     directive: string;
     payload: string | undefined;
     index: number;
@@ -70,7 +70,7 @@ async function dispatchDirective(
             return
         }
         case 'toolcall': {
-            await vscode.lm.invokeTool('cvdtool', {  toolInvocationToken: request.toolInvocationToken, input: { input: payload ?? 'default input' } })
+            await vscode.lm.invokeTool('cvdtool', { toolInvocationToken: request.toolInvocationToken, input: { input: payload ?? 'default input' } })
             return
         }
         case 'codeblockuri': {
