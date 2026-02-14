@@ -55,11 +55,12 @@ async function dispatchDirective(
     request: vscode.ChatRequest
 ): Promise<void> {
     const reference = getFileReferenceUri(request.references)
-    const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index, reference)
+    const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
     switch (parsed.directive) {
-        case 'markdown':
-            stream.markdown(payload)
+        case 'markdown': {
+            stream.markdown(payload + '\n')
             return
+        }
         case 'textedit': {
             if (reference) {
                 const edit = vscode.TextEdit.insert(new vscode.Position(0, 0), payload)
@@ -73,23 +74,27 @@ async function dispatchDirective(
         }
         case 'codeblockuri': {
             if (reference) {
-                stream.codeblockUri(reference, true)
+                stream.codeblockUri(reference, false)
             }
             return
         }
-        case 'progress':
+        case 'progress': {
             stream.progress(payload)
             return
-        case 'thinkingprogress':
+        }
+        case 'thinkingprogress': {
             stream.thinkingProgress({ id: `thinking-${parsed.index}`, text: payload })
             return
-        case 'warning':
+        }
+        case 'warning': {
             stream.warning(payload)
             return
-        case 'confirmation':
+        }
+        case 'confirmation': {
             stream.confirmation('Confirmation required', payload, { directive: parsed.directive, index: parsed.index }, ['Accept', 'Reject'])
             return
-        case 'questioncarousel':
+        }
+        case 'questioncarousel': {
             await stream.questionCarousel(
                 [
                     {
@@ -102,49 +107,30 @@ async function dispatchDirective(
                 true
             )
             return
-        default:
-            stream.markdown(payload)
+        }
+        default: {
             return
+        }
     }
 }
 
 // Provide a fallback payload when the directive payload is empty.
-function getDefaultPayload(directive: string, index: number, fileUri: vscode.Uri | undefined): string {
+function getDefaultPayload(directive: string, index: number): string {
     switch (directive) {
         case 'progress':
-            return `
-Running progress #${index + 1}
-~~~ts
-// This is a default payload for the "${directive}" directive.
-console.log('Hello from directive #${index + 1}');
-~~~
-`
+            return 'Working ...'
         case 'thinkingprogress':
-            return `
-Thinking update #${index + 1}
-~~~ts
-// This is a default payload for the "${directive}" directive.
-console.log('Hello from directive #${index + 1}');
-~~~
-`
+            return 'Thinking ...'
         case 'warning':
-            return `Warning generated for directive #${index + 1}`
+            return 'warning'
         case 'confirmation':
-            return `Confirm directive #${index + 1}`
+            return 'confirmation'
         case 'questioncarousel':
-            return `Question carousel prompt #${index + 1}`
+            return 'Question carousel'
         case 'textedit':
             return `// Text edit inserted by directive #${index + 1}\n`
         default:
-            return `
-Echo directive #${index + 1}
-
-\`\`\`ts
-// filepath: ${fileUri?.toString() ?? 'N/A'}
-// This is a default payload for the "${directive}" directive.
-console.log('Hello from directive #${index + 1}');
-\`\`\`
-`
+            return 'Hello'
     }
 }
 
