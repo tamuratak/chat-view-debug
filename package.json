@@ -15,7 +15,6 @@
     "vscode": "^1.108.0"
   },
   "files": [
-    "node_modules",
     "out",
     "LICENSE"
   ],
