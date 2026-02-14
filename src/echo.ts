@@ -27,7 +27,7 @@ export class EchoChatParticipant {
 
 type ParsedDirective = {
     directive: string;
-    payload: string;
+    payload: string | undefined;
     index: number;
 };
 
@@ -39,7 +39,7 @@ function parsePromptLines(input: string): ParsedDirective[] {
         .map((line, index) => {
             const [rawDirective, ...rest] = line.split(':')
             const directive = (rawDirective ?? '').trim().toLowerCase()
-            const payload = rest.join(':').trim()
+            const payload = rest.join(':').trim() || undefined
             return {
                 directive: directive || 'markdown',
                 payload,
@@ -55,21 +55,22 @@ async function dispatchDirective(
     request: vscode.ChatRequest
 ): Promise<void> {
     const reference = getFileReferenceUri(request.references)
-    const payload = parsed.payload || getDefaultPayload(parsed.directive, parsed.index)
+    const payload = parsed.payload
     switch (parsed.directive) {
         case 'markdown': {
-            stream.markdown(payload + '\n')
+            const md = payload || 'hello'
+            stream.markdown(md + '\n')
             return
         }
         case 'textedit': {
             if (reference) {
-                const edit = vscode.TextEdit.insert(new vscode.Position(0, 0), payload)
+                const edit = vscode.TextEdit.insert(new vscode.Position(0, 0), payload ?? 'text edit')
                 stream.textEdit(reference, [edit])
             }
             return
         }
         case 'toolcall': {
-            await vscode.lm.invokeTool('cvdtool', {  toolInvocationToken: request.toolInvocationToken, input: { input: payload } })
+            await vscode.lm.invokeTool('cvdtool', {  toolInvocationToken: request.toolInvocationToken, input: { input: payload ?? 'default input' } })
             return
         }
         case 'codeblockuri': {
@@ -79,19 +80,24 @@ async function dispatchDirective(
             return
         }
         case 'progress': {
-            stream.progress(payload)
+            stream.progress(payload ?? 'Working ...')
             return
         }
         case 'thinkingprogress': {
-            stream.thinkingProgress({ id: `thinking-${parsed.index}`, text: payload })
+            stream.thinkingProgress({ id: `thinking-${parsed.index}`, text: payload ?? 'Thinking ...' })
             return
         }
         case 'warning': {
-            stream.warning(payload)
+            stream.warning(payload ?? 'warning')
             return
         }
         case 'confirmation': {
-            stream.confirmation('Confirmation required', payload, { directive: parsed.directive, index: parsed.index }, ['Accept', 'Reject'])
+            stream.confirmation(
+                'Confirmation required',
+                payload ?? 'confirmation',
+                { directive: parsed.directive, index: parsed.index },
+                ['Accept', 'Reject']
+            )
             return
         }
         case 'questioncarousel': {
@@ -100,7 +106,7 @@ async function dispatchDirective(
                     {
                         id: `question-${parsed.index}`,
                         type: vscode.ChatQuestionType.Text,
-                        title: payload,
+                        title: payload ?? 'Question carousel',
                         message: 'Reply to continue the echo test'
                     }
                 ],
@@ -111,26 +117,6 @@ async function dispatchDirective(
         default: {
             return
         }
-    }
-}
-
-// Provide a fallback payload when the directive payload is empty.
-function getDefaultPayload(directive: string, index: number): string {
-    switch (directive) {
-        case 'progress':
-            return 'Working ...'
-        case 'thinkingprogress':
-            return 'Thinking ...'
-        case 'warning':
-            return 'warning'
-        case 'confirmation':
-            return 'confirmation'
-        case 'questioncarousel':
-            return 'Question carousel'
-        case 'textedit':
-            return `// Text edit inserted by directive #${index + 1}\n`
-        default:
-            return 'Hello'
     }
 }
 
