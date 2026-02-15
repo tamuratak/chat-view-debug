@@ -95,6 +95,10 @@ async function dispatchDirective(
             stream.progress(payload ?? 'Working ...')
             return
         }
+        case 'progresserror': {
+            stream.progress('Working ...', async () => { throw new Error('Something went wrong') })
+            return
+        }
         case 'thinkingprogress': {
             stream.thinkingProgress({ id: `thinking-${parsed.index}`, text: payload ?? ['Thinking ...'] })
             return
