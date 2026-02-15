@@ -26,7 +26,13 @@
   },
   "enabledApiProposals": [
     "embeddings",
+    "chatHooks",
+    "chatOutputRenderer",
     "chatParticipantAdditions",
+    "chatParticipantPrivate",
+    "chatReferenceBinaryData",
+    "chatReferenceDiagnostic",
+    "chatSessionsProvider",
     "chatProvider",
     "languageModelSystem",
     "languageModelThinkingPart"
