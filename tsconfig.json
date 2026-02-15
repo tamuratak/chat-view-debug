@@ -1,8 +1,5 @@
 {
     "compilerOptions": {
-        "jsx": "react",
-		"jsxFactory": "vscpp",
-		"jsxFragmentFactory": "vscppf",
         "esModuleInterop": true,
         "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
