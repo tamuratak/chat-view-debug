@@ -91,6 +91,11 @@ async function dispatchDirective(
             stream.codeblockUri(ref, false)
             return
         }
+        case 'codeblockuriisedit': {
+            const ref = reference ?? vscode.Uri.parse('file:///tmp/tmp.txt')
+            stream.codeblockUri(ref, true)
+            return
+        }
         case 'progress': {
             stream.progress(payload ?? 'Working ...')
             return
