@@ -96,7 +96,12 @@ async function dispatchDirective(
             return
         }
         case 'thinkingprogress': {
-            stream.thinkingProgress({ id: `thinking-${parsed.index}`, text: payload ?? 'Thinking ...' })
+            stream.thinkingProgress({ id: `thinking-${parsed.index}`, text: payload ?? ['Thinking ...'] })
+            return
+        }
+        case 'reference': {
+            const ref = reference ?? vscode.Uri.parse('file:///tmp/tmp.txt')
+            stream.reference(ref)
             return
         }
         case 'warning': {
