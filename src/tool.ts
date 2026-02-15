@@ -16,8 +16,15 @@ export class CvdTool implements LanguageModelTool<CvdInput> {
         }
     }
 
+    handleToolStream(): ProviderResult<vscode.LanguageModelToolStreamResult> {
+        return {
+            invocationMessage: 'CVD Tool handles stream',
+        }
+    }
+
     invoke(options: vscode.LanguageModelToolInvocationOptions<CvdInput>): ProviderResult<vscode.LanguageModelToolResult> {
         return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart('CVD Tool received input: ' + options.input.input)]);
     }
+
 
 }

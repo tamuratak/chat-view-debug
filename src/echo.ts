@@ -48,7 +48,7 @@ function parsePromptLines(input: string): ParsedDirective[] {
         })
 }
 
-let currentToolInvocationIndex = 0
+let currentToolCallId: string | undefined = undefined
 
 // Dispatch the parsed directive to the corresponding stream call, supplying defaults when needed.
 async function dispatchDirective(
@@ -76,12 +76,14 @@ async function dispatchDirective(
             return
         }
         case 'begintoolinvocation': {
-            stream.beginToolInvocation(`cvdtool-${parsed.index}`, 'cvdtool')
-            currentToolInvocationIndex = parsed.index
+            currentToolCallId = `cvdtool-${parsed.index}`
+            stream.beginToolInvocation(currentToolCallId, 'cvdtool', { partialInput: JSON.stringify({ input: payload ?? 'begin stream input' }) })
             return
         }
         case 'updateToolInvocation': {
-            stream.updateToolInvocation(`cvdtool-${currentToolInvocationIndex}`, { partialInput: { input: payload ?? 'updated input' } })
+            if (currentToolCallId) {
+                stream.updateToolInvocation(currentToolCallId, { partialInput: JSON.stringify({ input: payload ?? 'updated input' }) })
+            }
             return
         }
         case 'codeblockuri': {
