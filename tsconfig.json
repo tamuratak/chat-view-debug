@@ -25,13 +25,9 @@
         "sourceMap": true,
         "strict": true,
         "target": "es2024",
-        "baseUrl": "./",
-        "paths": {
-            "vscodegit": ["./types/vscodegit/git.d.ts"]
-        }
+        "baseUrl": "./"
     },
     "exclude": [
-        "contexttmp",
         "node_modules",
         "out"
     ]
