@@ -48,6 +48,8 @@ function parsePromptLines(input: string): ParsedDirective[] {
         })
 }
 
+let currentToolInvocationIndex = 0
+
 // Dispatch the parsed directive to the corresponding stream call, supplying defaults when needed.
 async function dispatchDirective(
     parsed: ParsedDirective,
@@ -71,6 +73,15 @@ async function dispatchDirective(
         }
         case 'toolcall': {
             await vscode.lm.invokeTool('cvdtool', { toolInvocationToken: request.toolInvocationToken, input: { input: payload ?? 'default input' } })
+            return
+        }
+        case 'begintoolinvocation': {
+            stream.beginToolInvocation(`cvdtool-${parsed.index}`, 'cvdtool')
+            currentToolInvocationIndex = parsed.index
+            return
+        }
+        case 'updateToolInvocation': {
+            stream.updateToolInvocation(`cvdtool-${currentToolInvocationIndex}`, { partialInput: { input: payload ?? 'updated input' } })
             return
         }
         case 'codeblockuri': {
