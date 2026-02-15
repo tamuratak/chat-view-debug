@@ -35,7 +35,9 @@
     "chatSessionsProvider",
     "chatProvider",
     "languageModelSystem",
-    "languageModelThinkingPart"
+    "languageModelThinkingPart",
+    "languageModelToolResultAudience",
+    "toolProgress"
   ],
   "contributes": {
     "chatParticipants": [
