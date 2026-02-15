@@ -96,7 +96,7 @@ async function dispatchDirective(
             return
         }
         case 'progresserror': {
-            stream.progress('Working ...', async () => { throw new Error('Something went wrong') })
+            stream.progress('Working ...', async () => { await sleep(10);throw new Error('Something went wrong') })
             return
         }
         case 'thinkingprogress': {
