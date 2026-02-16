@@ -65,7 +65,12 @@
           }
         }
       }
-
+    ],
+    "languageModelChatProviders": [
+      {
+        "vendor": "chat-view-debug",
+        "displayName": "Chat View Debug"
+      }
     ]
   },
   "activationEvents": [
