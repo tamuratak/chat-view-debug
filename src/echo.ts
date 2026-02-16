@@ -57,7 +57,7 @@ async function dispatchDirective(
     request: vscode.ChatRequest
 ): Promise<void> {
     const reference = getFileReferenceUri(request.references)
-    const payload = parsed.payload
+    const payload = parsed.payload?.replace(/\\n/g, '\n')
     switch (parsed.directive) {
         case 'markdown': {
             const md = payload || 'hello'
