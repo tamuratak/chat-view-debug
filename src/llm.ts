@@ -42,8 +42,8 @@ export class ChatViewDebugChatProvider implements LanguageModelChatProvider<Lang
         return
     }
 
-    async provideTokenCount() {
-        return 1
+    provideTokenCount() {
+        return Promise.resolve(1)
     }
 
 }
