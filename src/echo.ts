@@ -1,8 +1,6 @@
 import * as vscode from 'vscode'
+import { sleep } from './utils.js'
 
-async function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
 
 export class EchoChatParticipant {
 
