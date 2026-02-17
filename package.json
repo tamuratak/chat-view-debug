@@ -70,6 +70,10 @@
       {
         "vendor": "chat-view-debug",
         "displayName": "Chat View Debug"
+      },
+      {
+        "vendor": "chat-view-debug-stream",
+        "displayName": "Chat View Debug Stream"
       }
     ]
   },

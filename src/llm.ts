@@ -1,9 +1,9 @@
 import * as vscode from 'vscode'
-import { LanguageModelChatProvider, LanguageModelChatInformation, LanguageModelChatRequestMessage, ProvideLanguageModelChatResponseOptions, Progress, LanguageModelTextPart } from 'vscode'
+import { LanguageModelChatProvider, LanguageModelChatInformation, LanguageModelChatRequestMessage, ProvideLanguageModelChatResponseOptions, Progress, LanguageModelTextPart, LanguageModelThinkingPart } from 'vscode'
 import { sleep } from './utils'
 
 
-export class ChatViewDebugChatProvider implements LanguageModelChatProvider<LanguageModelChatInformation> {
+export class EchoChatProvider implements LanguageModelChatProvider<LanguageModelChatInformation> {
     provideLanguageModelChatInformation(): vscode.ProviderResult<vscode.LanguageModelChatInformation[]> {
         return [
             {
@@ -54,4 +54,56 @@ function extractUserRequest(text: string): string {
         return match[1]
     }
     return 'user request not found in message'
+}
+
+export class StreamChatProvider implements LanguageModelChatProvider<LanguageModelChatInformation> {
+    provideLanguageModelChatInformation(): vscode.ProviderResult<vscode.LanguageModelChatInformation[]> {
+        return [
+            {
+                id: 'chat-view-debug-stream',
+                name: 'Chat View Debug Stream',
+                family: 'chat-view-debug-stream',
+                version: 'chat-view-debug-stream',
+                capabilities: {
+                    toolCalling: true
+                },
+                maxInputTokens: 1000000,
+                maxOutputTokens: 10000,
+            }
+        ]
+    }
+
+    async provideLanguageModelChatResponse(
+        _model: LanguageModelChatInformation,
+        messages: readonly LanguageModelChatRequestMessage[],
+        _options: ProvideLanguageModelChatResponseOptions,
+        progress: Progress<vscode.LanguageModelResponsePart2>
+    ) {
+        const lastMessage = messages[messages.length - 1]
+        if (lastMessage.role === vscode.LanguageModelChatMessageRole.User) {
+            for (const part of lastMessage.content) {
+                if (part instanceof vscode.LanguageModelTextPart) {
+                    const userRequest = extractUserRequest(part.value)
+                    const resArray = userRequest.split('\n')
+                    for (const res of resArray) {
+                        const [rawDirective, ...rest] = res.split(':')
+                        const directive = (rawDirective ?? '').trim().toLowerCase()
+                        const payload = rest.join(':').trim().replace(/\\n/g, '\n') + '\n' || undefined
+                        if (directive === 'markdown') {
+                            progress.report(new LanguageModelTextPart(payload ?? ''))
+                        } else if (directive === 'thinking') {
+                            progress.report(new LanguageModelThinkingPart([], 'dummyId'))
+                        }
+                        await sleep(10) // Simulate some delay between lines
+                    }
+                }
+            }
+        }
+        return
+    }
+
+    provideTokenCount() {
+        return Promise.resolve(1)
+    }
+
 }
