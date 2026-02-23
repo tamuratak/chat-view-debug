@@ -4,6 +4,8 @@
 /.vscode-test/
 /.venv/
 
+.DS_Store
+
 # Logs
 logs
 *.log
