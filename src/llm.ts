@@ -141,6 +141,7 @@ export class SleepChatProvider implements LanguageModelChatProvider<LanguageMode
             console.log('Woken up! (Cancelled)\n')
         } else {
             progress.report(new LanguageModelTextPart('Woke up! (Slept for 3 seconds)\n'))
+            console.log('Woke up! (Slept for 3 seconds)\n')
         }
     }
 
