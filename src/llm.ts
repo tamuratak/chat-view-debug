@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import { LanguageModelChatProvider, LanguageModelChatInformation, LanguageModelChatRequestMessage, ProvideLanguageModelChatResponseOptions, Progress, LanguageModelTextPart, LanguageModelThinkingPart } from 'vscode'
-import { sleep } from './utils'
+import { sleep, sleepCancellable } from './utils'
 
 
 export class EchoChatProvider implements LanguageModelChatProvider<LanguageModelChatInformation> {
@@ -16,6 +16,7 @@ export class EchoChatProvider implements LanguageModelChatProvider<LanguageModel
                 },
                 maxInputTokens: 1000000,
                 maxOutputTokens: 10000,
+                isUserSelectable: true
             }
         ]
     }
@@ -69,6 +70,7 @@ export class StreamChatProvider implements LanguageModelChatProvider<LanguageMod
                 },
                 maxInputTokens: 1000000,
                 maxOutputTokens: 10000,
+                isUserSelectable: true
             }
         ]
     }
@@ -106,4 +108,43 @@ export class StreamChatProvider implements LanguageModelChatProvider<LanguageMod
         return Promise.resolve(1)
     }
 
+}
+
+export class SleepChatProvider implements LanguageModelChatProvider<LanguageModelChatInformation> {
+    provideLanguageModelChatInformation(): vscode.ProviderResult<vscode.LanguageModelChatInformation[]> {
+        return [
+            {
+                id: 'chat-view-debug-sleep',
+                name: 'Chat View Debug Sleep',
+                family: 'chat-view-debug-sleep',
+                version: 'chat-view-debug-sleep',
+                capabilities: {
+                    toolCalling: true
+                },
+                maxInputTokens: 1000000,
+                maxOutputTokens: 10000,
+                isUserSelectable: true
+            }
+        ]
+    }
+
+    async provideLanguageModelChatResponse(
+        _model: LanguageModelChatInformation,
+        _messages: readonly LanguageModelChatRequestMessage[],
+        _options: ProvideLanguageModelChatResponseOptions,
+        progress: Progress<vscode.LanguageModelResponsePart2>,
+        token: vscode.CancellationToken
+    ) {
+        const SLEEP_MS = 3000
+        const cancelled = await sleepCancellable(SLEEP_MS, token)
+        if (cancelled) {
+            progress.report(new LanguageModelTextPart('Woken up! (Cancelled)\n'))
+        } else {
+            progress.report(new LanguageModelTextPart('Woke up! (Slept for 3 seconds)\n'))
+        }
+    }
+
+    provideTokenCount() {
+        return Promise.resolve(1)
+    }
 }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 import { EchoChatParticipant } from './echo.js'
 import { CvdTool } from './tool.js'
-import { EchoChatProvider, StreamChatProvider } from './llm.js'
+import { EchoChatProvider, StreamChatProvider, SleepChatProvider } from './llm.js'
 
 export function activate() {
     const participant = new EchoChatParticipant()
@@ -11,4 +11,6 @@ export function activate() {
     vscode.lm.registerLanguageModelChatProvider('chat-view-debug', echoProvider)
     const streamProvider = new StreamChatProvider()
     vscode.lm.registerLanguageModelChatProvider('chat-view-debug-stream', streamProvider)
+    const sleepProvider = new SleepChatProvider()
+    vscode.lm.registerLanguageModelChatProvider('chat-view-debug-sleep', sleepProvider)
 }

@@ -74,6 +74,10 @@
       {
         "vendor": "chat-view-debug-stream",
         "displayName": "Chat View Debug Stream"
+      },
+      {
+        "vendor": "chat-view-debug-sleep",
+        "displayName": "Chat View Debug Sleep"
       }
     ]
   },
@@ -82,7 +86,7 @@
   ],
   "devDependencies": {
     "@eslint/js": "9.39.2",
-    "@types/node": "~22.15",
+    "@types/node": "~24.12",
     "@types/vscode": "1.108.1",
     "@vscode/dts": "0.4.1",
     "@vscode/vsce": "3.7.1",
