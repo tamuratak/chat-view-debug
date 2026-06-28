@@ -137,8 +137,11 @@ export class SleepChatProvider implements LanguageModelChatProvider<LanguageMode
     ) {
         const SLEEP_MS = 3000
         const cancelled = await sleepCancellable(SLEEP_MS, token)
+        token.onCancellationRequested(() => {
+            console.log('Cancellation requested!')
+        })
         if (cancelled) {
-            progress.report(new LanguageModelTextPart('Cancelled!\n'))   
+            progress.report(new LanguageModelTextPart('Cancelled!\n'))
             console.log('Woken up! (Cancelled)\n')
         } else {
             progress.report(new LanguageModelTextPart('Woke up! (Slept for 3 seconds)\n'))
