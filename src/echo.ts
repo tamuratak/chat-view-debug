@@ -73,6 +73,19 @@ async function dispatchDirective(
             await vscode.lm.invokeTool('cvdtool', { toolInvocationToken: request.toolInvocationToken, input: { input: payload ?? 'default input' } })
             return
         }
+        case 'toolcall2': {
+            const part1 = new vscode.ChatToolInvocationPart("my-tool", "call-1");
+            part1.enablePartialUpdate = true;
+            part1.isComplete = false;
+            part1.invocationMessage = "Running tool...";
+            stream.push(part1);
+            const part2 = new vscode.ChatToolInvocationPart("my-tool", "call-1");
+            part2.enablePartialUpdate = true;
+            part2.isComplete = true;
+            part2.pastTenseMessage = "Tool completed";
+            stream.push(part2);
+            return
+        }
         case 'begintoolinvocation': {
             currentToolCallId = `cvdtool-${parsed.index}`
             stream.beginToolInvocation(currentToolCallId, 'cvdtool', { partialInput: JSON.stringify({ input: payload ?? 'begin stream input' }) })
