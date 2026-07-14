@@ -85,6 +85,7 @@ async function dispatchDirective(
             part2.isComplete = true;
             part2.pastTenseMessage = 'Tool completed';
             stream.push(part2);
+            await sleep(100); // Simulate some processing time
             return
         }
         case 'begintoolinvocation': {
