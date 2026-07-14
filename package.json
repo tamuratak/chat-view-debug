@@ -1,7 +1,7 @@
 {
   "name": "chat-view-debug",
   "displayName": "Chat View Debug",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "publisher": "tamuratak",
   "license": "MIT",
   "description": "An extension to debug the Chat View API in VS Code.",
