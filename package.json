@@ -12,7 +12,7 @@
     "url": "https://github.com/tamuratak/chat-view-debug.git"
   },
   "engines": {
-    "vscode": "^1.108.0"
+    "vscode": "^1.125.0"
   },
   "files": [
     "out",
@@ -87,7 +87,7 @@
   "devDependencies": {
     "@eslint/js": "9.39.2",
     "@types/node": "~24.12",
-    "@types/vscode": "1.108.1",
+    "@types/vscode": "1.125.0",
     "@vscode/dts": "0.4.1",
     "@vscode/vsce": "3.7.1",
     "eslint": "9.39.2",
