@@ -74,15 +74,15 @@ async function dispatchDirective(
             return
         }
         case 'toolcall2': {
-            const part1 = new vscode.ChatToolInvocationPart("my-tool", "call-1");
+            const part1 = new vscode.ChatToolInvocationPart('my-tool', 'call-1');
             part1.enablePartialUpdate = true;
             part1.isComplete = false;
-            part1.invocationMessage = "Running tool...";
+            part1.invocationMessage = 'Running tool...';
             stream.push(part1);
-            const part2 = new vscode.ChatToolInvocationPart("my-tool", "call-1");
+            const part2 = new vscode.ChatToolInvocationPart('my-tool', 'call-1');
             part2.enablePartialUpdate = true;
             part2.isComplete = true;
-            part2.pastTenseMessage = "Tool completed";
+            part2.pastTenseMessage = 'Tool completed';
             stream.push(part2);
             return
         }
