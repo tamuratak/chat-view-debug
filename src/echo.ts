@@ -74,6 +74,7 @@ async function dispatchDirective(
             return
         }
         case 'toolcall2': {
+            await sleep(100);
             const part1 = new vscode.ChatToolInvocationPart('my-tool', 'call-1');
             part1.enablePartialUpdate = true;
             part1.isComplete = false;
