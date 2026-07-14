@@ -79,6 +79,7 @@ async function dispatchDirective(
             part1.isComplete = false;
             part1.invocationMessage = 'Running tool...';
             stream.push(part1);
+            await sleep(100); // Simulate some processing time
             const part2 = new vscode.ChatToolInvocationPart('my-tool', 'call-1');
             part2.enablePartialUpdate = true;
             part2.isComplete = true;
