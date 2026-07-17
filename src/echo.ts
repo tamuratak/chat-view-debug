@@ -74,19 +74,21 @@ async function dispatchDirective(
             return
         }
         case 'toolcall2': {
-            await sleep(100);
+            stream.push(new vscode.ChatResponseThinkingProgressPart('Thinking ...', `toolcall2-${parsed.index}`))
+            await sleep(100)
             const part1 = new vscode.ChatToolInvocationPart('my-tool', 'call-1');
             part1.enablePartialUpdate = true;
             part1.isComplete = false;
             part1.invocationMessage = 'Running tool...';
             stream.push(part1);
-            await sleep(100); // Simulate some processing time
             const part2 = new vscode.ChatToolInvocationPart('my-tool', 'call-1');
             part2.enablePartialUpdate = true;
             part2.isComplete = true;
             part2.pastTenseMessage = 'Tool completed';
             stream.push(part2);
             await sleep(100); // Simulate some processing time
+            stream.markdown('\n\nfinal response\n')
+//            stream.push(new vscode.ChatResponseThinkingProgressPart('Thinking gggg', 'toolcall2-ggg'))
             return
         }
         case 'begintoolinvocation': {
